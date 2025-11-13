@@ -5,7 +5,6 @@ import { verifyAccess } from "../utils/jwt.ts";
 import { simuladorService } from "../services/simuladorService.ts";
 
 enum pedidoColumns {
-  VALOR = "valor",
   STATUS = "status",
   USER_ID = "userId",
   CREATED_AT = "createdAt",
@@ -97,7 +96,6 @@ export const updatePedido = async (req: Request, res: Response) => {
     const bodyKeys: string[] = Object.keys(body);
     for (const key of bodyKeys) {
       if (
-        key !== pedidoColumns.VALOR &&
         key !== pedidoColumns.STATUS &&
         key !== pedidoColumns.USER_ID &&
         key !== pedidoColumns.CREATED_AT &&
