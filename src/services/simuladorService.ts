@@ -1,7 +1,6 @@
 import axios from "axios";
 
 class SimuladorService {
-  // TO-DO TIPAR PEDIDO
   constructor() {}
   async enviarPedidoParaFila(pedido: any, produtos: any ) {
     try {

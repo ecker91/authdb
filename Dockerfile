@@ -6,6 +6,8 @@ FROM base AS dev
 RUN npm install
 COPY tsconfig.json ./
 COPY prisma ./prisma
+RUN npx prisma generate
+RUN npx prisma migrate dev --name init_migration
 COPY src ./src
 
 EXPOSE 3000

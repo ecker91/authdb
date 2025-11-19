@@ -44,7 +44,6 @@ model produto {
   modelo            String
   tecido            String
   bloco             Json
-  estoque           Int
   userId            Int
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt

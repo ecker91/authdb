@@ -9,8 +9,7 @@ enum produtoColumns {
   TECIDO = "tecido",
   COR = "cor",
   ESTAMPA = "estampa",
-  BLOCO = "bloco",
-  ESTOQUE = "estoque"
+  BLOCO = "bloco"
 }
 
 export const createProduto = async (req: Request, res: Response) => {
@@ -76,8 +75,7 @@ export const updateProduto = async (req: Request, res: Response) => {
         key !== produtoColumns.MODELO &&
         key !== produtoColumns.TECIDO &&
         key !== produtoColumns.ESTAMPA &&
-        key !== produtoColumns.COR &&
-        key !== produtoColumns.ESTOQUE
+        key !== produtoColumns.COR
       )
         return res.status(404).send("Colunas não existentes");
     }
