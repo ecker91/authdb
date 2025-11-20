@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Base URL da API backend
-const API_BASE_URL = 'http://34.232.76.129:3000';
+const API_BASE_URL = 'http://localhost:3000';
 
 // Criar instância do axios
 const api = axios.create({
@@ -75,4 +75,3 @@ api.interceptors.response.use(
 );
 
 export default api;
-

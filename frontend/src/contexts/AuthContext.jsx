@@ -1,16 +1,12 @@
 import { createContext, useState, useEffect } from 'react';
-import type { ReactNode } from 'react';
 import api from '../config/axios';
-import type { AuthContextType, User, LoginResponse } from '../types/auth';
 
-export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext(undefined);
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
 
-export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [user, setUser] = useState<User | null>(null);
+
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // Verificar se há tokens salvos ao carregar
@@ -45,9 +41,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     checkAuth();
   }, []);
 
-  const login = async (email: string, password: string): Promise<void> => {
+  const login = async (email, password) => {
     try {
-      const response = await api.post<LoginResponse>('/login', {
+      const response = await api.post('/login', {
         email,
         password,
       });
@@ -60,13 +56,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       localStorage.setItem('user', JSON.stringify(user));
 
       setUser(user);
-    } catch (error: any) {
+    } catch (error) {
       const errorMessage = error.response?.data?.error || 'Erro ao fazer login';
       throw new Error(errorMessage);
     }
   };
 
-  const register = async (email: string, password: string, name?: string): Promise<void> => {
+  const register = async (email, password, name)  => {
     try {
       await api.post('/register', {
         email,
@@ -75,13 +71,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       });
       // Após registrar, fazer login automaticamente
       await login(email, password);
-    } catch (error: any) {
+    } catch (error) {
       const errorMessage = error.response?.data?.error || 'Erro ao registrar';
       throw new Error(errorMessage);
     }
   };
 
-  const logout = async (): Promise<void> => {
+  const logout = async ()=> {
     try {
       const refreshToken = localStorage.getItem('refreshToken');
       if (refreshToken) {
@@ -98,7 +94,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
-  const value: AuthContextType = {
+  const value= {
     user,
     isAuthenticated: !!user,
     login,
