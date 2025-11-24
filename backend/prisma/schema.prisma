@@ -67,6 +67,7 @@ model pedido {
 model produtosEmPedidos {
   id_pedido  Int
   id_produto Int
+  quantidade Int @default(1)
   pedido     pedido  @relation(fields: [id_pedido], references: [id])
   produto    produto @relation(fields: [id_produto], references: [id])
 

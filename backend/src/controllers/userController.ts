@@ -1,4 +1,5 @@
 import { prismaClient } from "../../prisma/prisma.ts";
+import bcrypt from 'bcrypt';
 import type { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import type { Request, Response } from "express";
 
@@ -50,11 +51,18 @@ export const updateUser = async (req:Request, res:Response) => {
                 key !== userColumns.PASSWORD && 
                 key !== userColumns.EMAIL) return res.status(404).send("Colunas não existentes")
         }
+
+        // If password is being updated, hash it before saving
+        const dataToUpdate: any = { ...body };
+        if (body.password) {
+            const saltRounds = 10;
+            const hashed = await bcrypt.hash(String(body.password), saltRounds);
+            dataToUpdate.password = hashed;
+        }
+
         const user = await prismaClient.user.update({
             where: { id: Number(params.id) },
-            data: {
-                ...body
-            },
+            data: dataToUpdate,
         })
         return res.status(200).json({
             message: "Usuário atualizado!",

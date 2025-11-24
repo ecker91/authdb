@@ -3,6 +3,7 @@ import {
   Grid, Card, CardContent, Typography, TextField, MenuItem,
   Button, Snackbar, Alert
 } from '@mui/material';
+import { useLocation, useNavigate } from 'react-router-dom';
 import CamisetaPreview from '../components/CamisetaPreview';
 import { usePedidos } from '../contexts/PedidoContext';
 import api from '../config/axios';
@@ -37,6 +38,10 @@ export default function Personalizar() {
     modelo: '', tecido: '', cor: '', estampa: '', tamanho: ''
   });
 
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [editingId, setEditingId] = React.useState(null);
+
   const [snack, setSnack] = React.useState({
     open: false, message: '', severity: 'success'
   });
@@ -56,20 +61,29 @@ export default function Personalizar() {
       const bloco = gerarBloco(form);
       const payload = { ...form, bloco };
 
-      const { data } = await api.post('/produtos', payload);
+      if (editingId) {
+        // atualizar produto existente — enviar apenas campos permitidos (sem bloco)
+        const updatePayload = { ...form };
+        const { data } = await api.put(`/produtos/${editingId}`, updatePayload);
+        setSnack({ open: true, message: `Template atualizado!`, severity: 'success' });
+        // depois de editar, voltar para templates
+        navigate('/templates');
+      } else {
+        const { data } = await api.post('/produtos', payload);
 
-      setPedidos(prev => [
-        {
-          dados: form,
-          bloco,
-          status: data.status,
-          createdAt: new Date().toISOString()
-        },
-        ...prev
-      ]);
+        setPedidos(prev => [
+          {
+            dados: form,
+            bloco,
+            status: data.status,
+            createdAt: new Date().toISOString()
+          },
+          ...prev
+        ]);
 
-      setSnack({ open: true, message: `Template cadastrado!`, severity: 'success' });
-      setForm({ modelo: '', tecido: '', cor: '', estampa: '', tamanho: '' });
+        setSnack({ open: true, message: `Template cadastrado!`, severity: 'success' });
+        setForm({ modelo: '', tecido: '', cor: '', estampa: '', tamanho: '' });
+      }
 
     } catch (e) {
       setSnack({ open: true, message: 'Falha ao enviar pedido', severity: 'error' });
@@ -79,6 +93,15 @@ export default function Personalizar() {
   };
 
   const disabled = !(form.modelo && form.tecido && form.cor && form.estampa && form.tamanho) || loading;
+
+  // Pre-fill form when navigated with produto state (for editing)
+  React.useEffect(() => {
+    if (location?.state?.produto) {
+      const p = location.state.produto;
+      setForm({ modelo: p.modelo || '', tecido: p.tecido || '', cor: p.cor || '', estampa: p.estampa || '', tamanho: p.tamanho || '' });
+      setEditingId(p.id);
+    }
+  }, [location]);
 
   return (
     <Grid container spacing={3}>
@@ -115,14 +138,19 @@ export default function Personalizar() {
               {tamanhos.map(m => <MenuItem key={m} value={m}>{m}</MenuItem>)}
             </TextField>
 
-            <Button
-              variant="contained"
-              disabled={disabled}
-              onClick={enviar}
-              sx={{ fontWeight: 600, mt: 2 }}
-            >
-              {loading ? "Enviando..." : "Confirmar Template"}
-            </Button>
+            <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
+              <Button
+                variant="contained"
+                disabled={disabled}
+                onClick={enviar}
+                sx={{ fontWeight: 600 }}
+              >
+                {loading ? (editingId ? 'Salvando...' : 'Enviando...') : (editingId ? 'Salvar alterações' : 'Confirmar Template')}
+              </Button>
+              {editingId && (
+                <Button variant="outlined" onClick={() => navigate('/templates')}>Cancelar</Button>
+              )}
+            </div>
           </CardContent>
         </Card>
       </Grid>

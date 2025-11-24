@@ -94,11 +94,29 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const updateProfile = async (updates) => {
+    try {
+      if (!user?.id) throw new Error('Usuário não autenticado');
+      const response = await api.put(`/users/${user.id}`, updates);
+      // controller returns { message, data: user }
+      const updated = response.data?.data || response.data || null;
+      if (updated) {
+        localStorage.setItem('user', JSON.stringify(updated));
+        setUser(updated);
+      }
+      return updated;
+    } catch (error) {
+      const errorMessage = error.response?.data || error.message || 'Erro ao atualizar perfil';
+      throw new Error(errorMessage);
+    }
+  };
+
   const value= {
     user,
     isAuthenticated: !!user,
     login,
     register,
+    updateProfile,
     logout,
     loading,
   };

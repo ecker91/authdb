@@ -111,12 +111,19 @@ export const deleteProduto = async (req: Request, res: Response) => {
     const { params } = req;
     const token = req?.headers?.authorization?.slice("Bearer ".length);
     const payload = verifyAccess(token || "");
+  // debug logs: mostrar quem está pedindo e qual id
+  console.log('deleteProduto request - params.id:', params.id);
+  console.log('deleteProduto request - raw Authorization header:', req.headers.authorization);
+  console.log('deleteProduto request - token userId from payload (if decoded):', payload?.userId);
+
     const produtoToDelete = await prismaClient.produto.findUnique({
       where: {
         id: Number(params.id),
       },
     });
+    console.log('produtoToDelete fetched:', produtoToDelete ? { id: produtoToDelete.id, userId: produtoToDelete.userId } : null);
     if (produtoToDelete?.userId !== payload.userId) {
+      console.error('deleteProduto - ownership mismatch:', { produtoUserId: produtoToDelete?.userId, tokenUserId: payload.userId });
       return res.status(403).send("Produto não pertence ao usuário");
     }
     await prismaClient.produto.delete({

@@ -60,13 +60,14 @@ api.interceptors.response.use(
           // Se o refresh falhar, limpar tokens e redirecionar para login
           localStorage.removeItem('accessToken');
           localStorage.removeItem('refreshToken');
-          window.location.href = '/login';
+          // Do not force a navigation here to avoid unexpected reload loops during development.
+          // Return the error so the UI can handle navigation or show a message.
           return Promise.reject(refreshError);
         }
       } else {
         // Se não tiver refresh token, redirecionar para login
         localStorage.removeItem('accessToken');
-        window.location.href = '/login';
+        // Do not force navigation here; let the UI decide what to do on unauthenticated requests.
       }
     }
 
