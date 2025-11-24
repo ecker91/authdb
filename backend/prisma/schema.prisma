@@ -10,7 +10,6 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = "mysql://root:senai@localhost:3306/authdb"
 }
 
 // user table
