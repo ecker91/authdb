@@ -1,14 +1,31 @@
-FROM node:20-alpine AS base
+# Stage 1 — Build
+FROM node:20-alpine AS build
 WORKDIR /usr/src/app
-COPY package*.json ./
 
-FROM base AS dev
+# Instala dependências
+COPY package*.json ./
 RUN npm install
-COPY tsconfig.json ./
+
+# Copia Prisma e gera client
 COPY prisma ./prisma
 RUN npx prisma generate
-RUN npx prisma migrate dev --name init_migration
-COPY src ./src
 
+# Copia código e compila TypeScript
+COPY tsconfig.json ./
+COPY src ./src
+RUN npm run build
+
+# Stage 2 — Produção
+FROM node:20-alpine AS prod
+WORKDIR /usr/src/app
+
+# Copia node_modules, dist e Prisma
+COPY --from=build /usr/src/app/node_modules ./node_modules
+COPY --from=build /usr/src/app/dist ./dist
+COPY --from=build /usr/src/app/prisma ./prisma
+
+# Porta da aplicação
 EXPOSE 3000
-CMD ["npm", "run", "dev"]
+
+# Comando para aplicar migrations e iniciar app
+CMD ["sh", "-c", "npx prisma migrate deploy && node dist/index.js"]

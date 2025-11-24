@@ -2,8 +2,7 @@
 import { defineConfig } from '@prisma/config';
 
 export default defineConfig({
-  // nome do datasource deve bater com schema.prisma
   datasource: {
-      url: process.env.DATABASE_URL || "mysql://root:senai@localhost:3306/authdb",
+    url: process.env.DATABASE_URL || "mysql://root:senai@52.91.121.144:3306/authdb",
   },
 });
