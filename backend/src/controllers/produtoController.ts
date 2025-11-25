@@ -1,7 +1,7 @@
-import { prismaClient } from "../../prisma/prisma.ts";
+import { prismaClient } from "../../prisma/prisma";
 import type { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import type { Request, Response } from "express";
-import { verifyAccess } from "../utils/jwt.ts";
+import { verifyAccess } from "../utils/jwt";
 
 enum produtoColumns {
   TAMANHO = "tamanho",

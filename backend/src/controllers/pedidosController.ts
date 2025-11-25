@@ -1,8 +1,8 @@
-import { prismaClient } from "../../prisma/prisma.ts";
+import { prismaClient } from "../../prisma/prisma";
 import type { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import type { Request, Response } from "express";
-import { verifyAccess } from "../utils/jwt.ts";
-import { simuladorService } from "../services/simuladorService.ts";
+import { verifyAccess } from "../utils/jwt";
+import { simuladorService } from "../services/simuladorService";
 
 enum pedidoColumns {
   STATUS = "status",

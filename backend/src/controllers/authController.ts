@@ -1,11 +1,11 @@
 import bcrypt from "bcrypt";
 import type { Request, Response } from "express";
-import { prismaClient } from "../../prisma/prisma.ts";
+import { prismaClient } from "../../prisma/prisma";
 import {
   signAccessToken,
   signRefreshToken,
   verifyRefresh,
-} from "../utils/jwt.ts";
+} from "../utils/jwt";
 
 export const register = async (
   req: Request,
